@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "~/auth";
+import { supabase } from "~/lib/supabase";
 import { defaultConfig } from "~/lib/config";
-
-let inMemoryConfigStore: Record<number, any> = {}; // shared with save
 
 export async function GET() {
   const session = await getServerSession(authOptions);
@@ -12,7 +11,17 @@ export async function GET() {
   }
 
   const fid = session.user.fid;
-  const config = inMemoryConfigStore[fid] || defaultConfig;
 
-  return NextResponse.json(config);
+  const { data, error } = await supabase
+    .from("configs")
+    .select("config")
+    .eq("fid", fid)
+    .single();
+
+  if (error && error.code !== "PGRST116") {
+    console.error("Load failed:", error.message);
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json(data?.config || defaultConfig);
 }
