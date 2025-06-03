@@ -1,4 +1,4 @@
-import { UserTipSettings } from "@/types/tip";
+import { UserTipSettings } from "~/types/tip";
 
 export const defaultConfig: UserTipSettings = {
   dailyLimit: 1.0,

@@ -1,4 +1,4 @@
-import { TipConfigForm } from "@/components/TipConfigForm";
+import { TipConfigForm } from "~/components/TipConfigForm";
 
 export default function HomePage() {
   return (

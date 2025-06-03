@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { defaultConfig } from "@/lib/config";
-import { TipAction, TipConfig, UserTipSettings } from "@/types/tip";
+import { defaultConfig } from "~/lib/config";
+import { TipAction, TipConfig, UserTipSettings } from "~/types/tip";
 
 const actionLabels: Record<TipAction, string> = {
   like: "Like",
