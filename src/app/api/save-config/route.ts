@@ -1,9 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "~/auth";
 
-let userConfig: any = null; // mock in-memory storage
+let inMemoryConfigStore: Record<number, any> = {}; // key = FID
 
 export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.fid) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const fid = session.user.fid;
   const body = await req.json();
-  userConfig = body;
-  return NextResponse.json({ status: "success", stored: userConfig });
+
+  inMemoryConfigStore[fid] = body;
+
+  return NextResponse.json({ status: "success", fid });
 }

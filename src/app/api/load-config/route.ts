@@ -1,8 +1,18 @@
 import { NextResponse } from "next/server";
-import { defaultConfig } from "@/lib/config";
+import { getServerSession } from "next-auth";
+import { authOptions } from "~/auth";
+import { defaultConfig } from "~/lib/config";
 
-let userConfig: any = null; // shared with save-config
+let inMemoryConfigStore: Record<number, any> = {}; // shared with save
 
 export async function GET() {
-  return NextResponse.json(userConfig ?? defaultConfig);
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.fid) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const fid = session.user.fid;
+  const config = inMemoryConfigStore[fid] || defaultConfig;
+
+  return NextResponse.json(config);
 }
